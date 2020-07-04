@@ -39,4 +39,19 @@ public class EnumConstants {
 		}
 	}
 
+	public enum SlotType {
+		LIGHT_MOTOR_VEHICLE(1), HEAVY_MOTOR_VEHICLE(2), TWO_WHEELER(3);
+
+		private Integer slotCode;
+
+		private SlotType(Integer slotCode) {
+			this.slotCode = slotCode;
+		}
+
+		public Integer getSlotCode() {
+			return this.slotCode;
+		}
+
+	}
+
 }

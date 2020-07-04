@@ -11,9 +11,9 @@ import model.Slot;
  */
 public interface ProcessParking {
 
-	public Integer createParking(Integer capacity) throws ParkException;
+	public Integer createParking(String[] parameters) throws ParkException;
 
-	public Integer park(String registrationNo, String color) throws ParkException;
+	public Integer park(String registrationNo, String color, Integer slotType) throws ParkException;
 
 	public Integer leave(Integer slotNo) throws ParkException;
 
