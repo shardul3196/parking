@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import constants.EnumConstants.SlotType;
 import exception.ParkException;
 import model.Car;
 import model.Slot;
@@ -16,30 +17,58 @@ import processor.ProcessParking;
  */
 public class ProcessParkingImpl implements ProcessParking {
 
-	public Integer createParking(Integer capacity) throws ParkException {
+	public Integer createParking(String parameters[]) throws ParkException {
+		Integer capacity = Integer.parseInt(parameters[1]);
+		Integer lMVCapacity = Integer.parseInt(parameters[2]);
+		Integer hMVcapacity = Integer.parseInt(parameters[3]);
+		Integer tWcapacity = Integer.parseInt(parameters[4]);
+
+		if (capacity.compareTo(lMVCapacity + hMVcapacity + tWcapacity) != 0) {
+			return 0;
+		}
+
 		Map<Integer, Slot> slots = DataManagerImpl.getDataManager().getSlots();
 		SortedSet<Integer> emptySlotIds = DataManagerImpl.getDataManager().getEmpltySlotIds();
 		if (!slots.isEmpty()) {
 			return 0;
 		}
 		DataManagerImpl.getDataManager().setCapacity(capacity);
-		for (int i = 1; i <= capacity; i++) {
-			slots.put(i, createSlot(i));
+		int i = 1;
+		for (; i <= lMVCapacity; i++) {
+			slots.put(i, createSlot(i, SlotType.LIGHT_MOTOR_VEHICLE.getSlotCode()));
+			emptySlotIds.add(i);
+		}
+		for (; i <= hMVcapacity + lMVCapacity; i++) {
+			slots.put(i, createSlot(i, SlotType.HEAVY_MOTOR_VEHICLE.getSlotCode()));
+			emptySlotIds.add(i);
+		}
+		for (; i <= capacity; i++) {
+			slots.put(i, createSlot(i, SlotType.TWO_WHEELER.getSlotCode()));
 			emptySlotIds.add(i);
 		}
 		return capacity;
 	}
 
-	public Integer park(String registrationNo, String color) throws ParkException {
+	public Integer park(String registrationNo, String color, Integer slotType) throws ParkException {
 		SortedSet<Integer> emptySlotIds = DataManagerImpl.getDataManager().getEmpltySlotIds();
 		if (emptySlotIds.isEmpty()) {
 			return 0;
 		}
-		Integer slotId = emptySlotIds.first();
-		emptySlotIds.remove(slotId);
-		Slot slot = DataManagerImpl.getDataManager().getSlots().get(slotId);
-		slot.addCar(createCar(registrationNo, color));
-		return slotId;
+		Integer response = 0;
+		for (Integer slotId : emptySlotIds) {
+			Slot slot = DataManagerImpl.getDataManager().getSlots().get(slotId);
+			if (slot.getSlotType().equals(slotType)) {
+				slot.addCar(createCar(registrationNo, color));
+				response = slotId;
+				break;
+			}
+		}
+
+		if (response != 0) {
+			emptySlotIds.remove(response);
+		}
+
+		return response;
 	}
 
 	public Integer leave(Integer slotNo) throws ParkException {
@@ -107,10 +136,11 @@ public class ProcessParkingImpl implements ProcessParking {
 		DataManagerImpl.getDataManager().getEmpltySlotIds().clear();
 	}
 
-	private Slot createSlot(Integer slotNo) throws ParkException {
+	private Slot createSlot(Integer slotNo, Integer slotType) throws ParkException {
 		Slot slot = new Slot();
 		slot.setIsOccupied(false);
 		slot.setSlotNo(slotNo);
+		slot.setSlotType(slotType);
 		return slot;
 	}
 

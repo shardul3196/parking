@@ -12,6 +12,8 @@ public class Slot {
 
 	private Boolean isOccupied;
 
+	private Integer slotType;
+
 	public Slot addCar(Car car) {
 		this.car = car;
 		this.isOccupied = true;
@@ -44,6 +46,15 @@ public class Slot {
 	public Slot setSlotNo(Integer slotNo) {
 		this.slotNo = slotNo;
 		return this;
+	}
+
+	public Slot setSlotType(Integer slotType) {
+		this.slotType = slotType;
+		return this;
+	}
+
+	public Integer getSlotType() {
+		return this.slotType;
 	}
 
 	@Override

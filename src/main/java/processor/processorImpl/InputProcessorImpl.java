@@ -40,11 +40,10 @@ public class InputProcessorImpl implements InputProcessor {
 					String command = parameters[0];
 					try {
 						if (command.equalsIgnoreCase(Commands.CREATE_SLOT.getCommand())) {
-							outputHandler(Commands.CREATE_SLOT,
-									processParking.createParking(Integer.valueOf(parameters[1].trim())));
+							outputHandler(Commands.CREATE_SLOT, processParking.createParking(parameters));
 						} else if (command.equalsIgnoreCase(Commands.PARK.getCommand())) {
-							outputHandler(Commands.PARK,
-									processParking.park(parameters[1].trim(), parameters[2].trim()));
+							outputHandler(Commands.PARK, processParking.park(parameters[1].trim(), parameters[2].trim(),
+									Integer.parseInt(parameters[3].trim())));
 						} else if (command.equalsIgnoreCase(Commands.LEAVE.getCommand())) {
 							outputHandler(Commands.LEAVE, processParking.leave(Integer.valueOf(parameters[1].trim())));
 						} else if (command.equalsIgnoreCase(Commands.STATUS.getCommand())) {
@@ -82,9 +81,11 @@ public class InputProcessorImpl implements InputProcessor {
 		instructionCompiled.append("--------------Please Enter one of the below commands.-----------------------")
 				.append("\n");
 		instructionCompiled.append("A) For creating parking lot ---> ").append(Commands.CREATE_SLOT.getCommand())
-				.append(" <capacity>").append("\n");
-		instructionCompiled.append("B) To park a car ---> ").append(Commands.PARK.getCommand())
-				.append(" <registration_number> <car_color>").append("\n");
+				.append(" <capacity> <number of light vehicle slots> <number of heavy vehicle slots> <number of two wheeler slots>")
+				.append("\n");
+		instructionCompiled.append("B) To park a car ---> ").append(Commands.PARK.getCommand()).append(
+				" <registration_number> <car_color> <vehicle type 1 for light motor vehicle or 2 for heavy motor vehicle or 3 for two wheeler>")
+				.append("\n");
 		instructionCompiled.append("C) Unpark car from parking ---> ").append(Commands.LEAVE.getCommand())
 				.append(" <slot_number").append("\n");
 		instructionCompiled.append("D) Print status of parking slot ---> ").append(Commands.STATUS.getCommand())
